@@ -14,13 +14,16 @@ while 1:
     for message in messages:
         processorProperties = json.loads(message.body)
         print("Url to process: {0}".format(processorProperties['s3-url']))
+        print("Original image name  : {0}".format(processorProperties['original-image-name']))
         print("New Width: {0}".format(processorProperties['resize']['width']))
         print("New Height  : {0}".format(processorProperties['resize']['height']))
 
+        bucket_name = 'procurando-thumbor-images'
         url = processorProperties['s3-url']
-        urllib.request.urlretrieve(url, 'love-exclusivo.jpg')
+        original_image_name = processorProperties['original-image-name']
+        urllib.request.urlretrieve(url, original_image_name)
 
         s3 = boto3.client('s3')
-        s3.upload_file('love-exclusivo.jpg', 'procurando-thumbor-images', 'love-exclusivo-image.jpg')
+        s3.upload_file(original_image_name, bucket_name, original_image_name)
 
         message.delete()
