@@ -16,12 +16,12 @@ while 1:
     for message in messages:
         thumbor_image_to_process = json.loads(message.body)
 
-        s3_url = thumbor_image_to_process['s3-url']
-        original_image_name = thumbor_image_to_process['original-image-name']
-        bucket_name = thumbor_image_to_process["bucket-name-original"]
+        image_url = thumbor_image_to_process["original-image"]['image-url']
+        original_image_name = thumbor_image_to_process["original-image"]['image-name']
+        bucket_name = thumbor_image_to_process["original-image"]["bucket-name"]
 
-        print("Original Image url to process {0}".format(s3_url))
-        urllib.request.urlretrieve(s3_url, original_image_name)
+        print("Original Image url to process {0}".format(image_url))
+        urllib.request.urlretrieve(image_url, original_image_name)
         s3.upload_file(original_image_name, bucket_name, original_image_name)
 
         if thumbor_image_to_process["resize"]:
@@ -31,7 +31,7 @@ while 1:
                 bucket_name = image_to_process["bucket-name"]
                 resized_name = image_to_process["image-name"]
                 resize = image_width + "x" + image_height
-                image_url_to_process = thumbor_processor_server + resize + "/" + s3_url
+                image_url_to_process = thumbor_processor_server + resize + "/" + image_url
                 print("Resized Image url {0}".format(image_url_to_process))
                 urllib.request.urlretrieve(image_url_to_process, resized_name)
                 s3.upload_file(resized_name, bucket_name, resized_name)
