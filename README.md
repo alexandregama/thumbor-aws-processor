@@ -5,3 +5,15 @@
   "resize": {"width": "200", "height": "100"}
 }
 ```
+
+Installed Python dependencies
+
+Pillow
+```bash
+$ pip3.5 install pillow
+```
+
+Requests
+```bash
+$ pip3.5 install requests
+```
