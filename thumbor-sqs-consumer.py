@@ -1,5 +1,6 @@
 import boto3
 import json
+from PIL import Image
 from config.configurator import ThumborConfigurator
 import urllib.request
 
@@ -22,7 +23,8 @@ while 1:
 
         print("Original Image url to process {0}".format(image_url))
         urllib.request.urlretrieve(image_url, original_image_name)
-        s3.upload_file(original_image_name, bucket_name, original_image_name)
+        image_file = open(original_image_name, 'rb')
+        s3.put_object(ACL='public-read', Bucket=bucket_name, ContentType='image', Body=image_file, Key=original_image_name)
 
         if thumbor_image_to_process["resize"]:
             for image_to_process in thumbor_image_to_process["resize"]:
@@ -34,6 +36,7 @@ while 1:
                 image_url_to_process = thumbor_processor_server + resize + "/" + image_url
                 print("Resized Image url {0}".format(image_url_to_process))
                 urllib.request.urlretrieve(image_url_to_process, resized_name)
-                s3.upload_file(resized_name, bucket_name, resized_name)
+                image_file = open(resized_name, 'rb')
+                s3.put_object(ACL='public-read', Bucket=bucket_name, ContentType='image', Body=image_file, Key=resized_name)
 
         message.delete()
